@@ -1,0 +1,26 @@
+{% extends "dl_menu.html" %}
+{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+<span style="float: right;">
+{% if image.owner == user %}
+<a href="{% url 'dl:image_update' image.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'dl:image_delete' image.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+<h1 class="text-center">{{ image.title }}</h1>
+
+<img  class="img-responsive center-block" src="/media/{{ image.image }}">
+
+<p class="text-center">
+<h4 class="text-center">Description:</h4>
+<p class="text-center">{{ image.description }}</p>
+
+<p class="text-center">(Posted {{ image.updated_at|naturaltime }})</p>
+<p>
+<a href="{% url 'dl:all' %}">All images</a>
+</p>
+{% endblock %}

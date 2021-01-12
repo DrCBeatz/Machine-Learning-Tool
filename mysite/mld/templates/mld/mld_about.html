@@ -1,0 +1,78 @@
+{% extends "mld_menu.html" %}
+{% block content %}
+
+
+<h1 class="text-center">How to use this app</h1>
+
+<!--{% if user.is_authenticated %}-->
+<!--    <form action="{% url 'logout' %}?next={% url 'mld:mld_about' %}">-->
+<!--        <input class ="form-control form-horizontal btn btn-default" type="submit" value="Logout">-->
+<!--    </form>-->
+<!--{% else %}-->
+<!--    <form action="{% url 'login' %}?next={% url 'mld:mld_about' %}">-->
+<!--        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Login">-->
+<!--    </form>-->
+<!--{% endif %}-->
+
+<p>This app lets you upload and use custom datasets (or use built-in datasets popular in machine learning),
+train and test these models using various binary classification algorithms (select 'Algorithms' from the top menu to learn more) and save their results (known as <em>entries</em>).
+You can then create graphs comparing the train and test accuracy of a particular dataset, algorithm and
+model parameter.
+
+<!--<p>-->
+<!--{% if user.is_authenticated %}-->
+<!--<a href="{% url 'logout' %}?next={% url 'mld:mld_about' %}">Logout</a>-->
+<!--{% else %}-->
+<!--<p>To use this app <a href="{% url 'login' %}?next={% url 'mld:mld_about' %}">please login.</a></p>-->
+<!--{% endif %}-->
+<!--</p>-->
+
+<h3 text="text-center">How to train and test a model for a built-in dataset</h3>
+
+<p>The models that you train and test are known as <em>entries</em>. To create an entry:</p>
+
+<ol>
+    <li>Select ‘Add Entry’ from the top menu.</li>
+    <li>Under ML type (the type of algorithm), select ‘binary classification’.</li>
+    <li>Select a dataset (try the Wisconsin Breast Cancer dataset to start).</li>
+    <li>Select an algorithm (try K-Nearest Neighbours).</li>
+    <li>Enter a number for parameter 1 value (this can be any positive integer value, choose a number between 1 and 10).</li>
+    <li>Click or tap the ‘submit’ button.</li>
+</ol>
+
+<p>You will then be taken to the ‘Entries’ page, which shows a list of all the models you have trained and tested, and the train/test
+accuracy results (which is represented by a decimal number from 0 to 1, where 1 equals 100% accuracy). From here you can either add
+another entry, edit or delete any entries you’ve made.</p>
+
+<h3 class="text-center">How to create a graph to plot the train/test accuracy of an algorithm & dataset</h3>
+
+<ol>
+    <li>Add at least 3 entries for the same dataset, algorithm, and parameter number (which is 1 by default).</li>
+    <li>Select ‘Add Graph’ from the top menu.</li>
+    <li>Choose the ML type, dataset, algorithm, and parameter to plot (1 by default on most algorithms, i.e. enter the number 1).</li>
+    <li>Click or tap the ‘submit’ button.</li>
+</ol>
+
+<p>You will then be taken to the Graphs page, where you should see the title of the graph you just created.
+Click on the title of the graph to view the graph.</p>
+
+<h3class="text-center">How to upload a custom dataset</h3>
+
+<ol>
+    <li>Select ‘Add Dataset’ from the top menu.</li>
+    <li>Enter and title and description of the dataset.</li>
+    <li>Under ML Type, select ‘binary classification’.</li>
+    <li>Click or tap the ‘upload file’ and locate the file on your hard drive.</li>
+    <li>Select the filetype (formats supported include CSV, Excel .xlsx and .xls)*.</li>
+    <li>Click or tap the ‘submit’ button.</li>
+</ol>
+
+<p>You will be taken to the ‘Datasets’ page, and you should now see your dataset added to the list.
+You can then make entries and graphs using this custom data set. Note that if you delete this dataset,
+any entries or graphs you make using this dataset will be deleted also.</p>
+
+<p>*(for datasets, the last column will be the target or output variable, and by default Excel files will
+ignore the first row of the dataset as this is header data, usually the title, which is not needed during
+training/testing and is provided by the user when uploading the dataset)</p>
+
+{% endblock %}

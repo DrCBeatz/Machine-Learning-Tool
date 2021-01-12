@@ -1,0 +1,63 @@
+{% extends "mld_menu.html" %}
+{% block content %}
+<h1 class="text-center">Graphs</h1>
+<div class="container">
+
+    <form action="{% url 'mld:graph_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Graph">
+    </form>
+
+{% if graph_list %}
+<ul class="list-group">
+  {% for graph in graph_list %}
+
+        <a class="list-group-item" href="{% url 'mld:graph_detail'  graph.id %}"><h4 class="list-group-heading"> {{ graph.dataset }} : {{ graph.algorithm }}</h4>
+        {% if graph.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'mld:graph_delete' graph.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'mld:graph_update' graph.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+        <p class="list-group-item-text">
+            <!--<a href="{% url 'mld:graph_detail'  graph.id %}">...</a>-->
+            Parameter to plot: {% if graph.parameter_to_plot == 1 %}
+            {{graph.algorithm.parameter_1_name}}
+            {% endif %}
+            {% if graph.parameter_to_plot == 2 %}
+            {{graph.algorithm.parameter_2_name}}
+            {% endif %}
+            {% if graph.parameter_to_plot == 3 %}
+            {{graph.algorithm.parameter_3_name}}
+            {% endif %}
+        </p>
+        <p class="list-group-item-text">
+        <small>
+        {% if user.is_superuser == True %}
+            posted by {{ graph.owner.username }}
+        {% endif %}
+        {{ graph.natural_updated }}
+        </small>
+        </p>
+
+    </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no graphs in the database.</p>
+{% endif %}
+</p>
+
+</div>
+
+{% endblock %}

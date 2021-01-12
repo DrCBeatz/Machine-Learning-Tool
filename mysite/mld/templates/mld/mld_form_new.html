@@ -1,0 +1,59 @@
+{% extends "mld_menu.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'mld:all' %}';return false;">
+  </form>
+
+  {{ entry|json_script:"hello-data" }}
+  {{ entry.ml_type }}
+</p>
+<script>
+
+    var value = JSON.parse(document.getElementById('hello-data').textContent);
+    console.log(value);
+
+    var algorithms = [];
+    var datasets = [];
+    var binary_classification_datasets = [];
+    var regression_datasets = [];
+    var binary_classification_algorithms = []; //
+    var regression_algorithms = []; //
+    var number_of_parameters = []; //
+    var parameter_1_names_keys = []; //
+    var parameter_2_names_keys = []; //
+    var parameter_3_names_keys = [];
+    var parameter_names = [];
+
+    var dataset_select_text = [];
+    var dataset_select_value = [];
+    var algorithm_select_text = [];
+    var algorithm_select_value = [];
+
+
+    function AddAttributes(){
+        document.getElementById('id_ml_type').setAttribute('onchange', 'myFunction();');
+
+        document.getElementById('id_algorithm').setAttribute('onchange', 'checkNumberOfParameters();');
+
+    };
+
+    function myFunction() {
+        console.log('oh hai!');
+    };
+
+    function checkNumberOfParameters() {
+        console.log('henlo fren!');
+    };
+
+    window.onload = AddAttributes;
+
+
+
+</script>
+
+{% endblock %}

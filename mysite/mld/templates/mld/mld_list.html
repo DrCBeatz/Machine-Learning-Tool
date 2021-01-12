@@ -1,0 +1,70 @@
+{% extends "mld_menu.html" %}
+{% block content %}
+<h1 class="text-center">Entries</h1>
+
+
+<div class="container">
+
+    <form action="{% url 'mld:mld_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Entry">
+    </form>
+
+{% if entry_list %}
+<ul class="list-group">
+  {% for entry in entry_list %}
+        <a class="list-group-item" href="{% url 'mld:mld_detail'  entry.id %}"><h4 class="list-group-item-heading">{{ entry.dataset }} - {{ entry.algorithm }}{% if entry.algorithm.parameter_1_name.title != 'None' %}: {{entry.algorithm.parameter_1_name}} = {{ entry.parameter_1_value }}{% endif %} {% if entry.algorithm.parameter_2_name.title != 'None' %}
+            {{ entry.algorithm.parameter_2_name}} = {{ entry.parameter_2_value }}
+            {% endif %}
+            {% if entry.algorithm.parameter_3_name.title != 'None' %}
+            {{entry.algorithm.parameter_3_name}} = {{ entry.parameter_3_value }}
+            {% endif %}</h4>
+        {% if entry.owner == user %}
+        <span class="pull-right">
+                <form action="{% url 'mld:mld_delete' entry.id %}">
+                    <!--<input class="btn btn-xs btn-default" type="submit" value="Delete" />-->
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'mld:mld_update' entry.id %}">
+                    <!--<input class="btn btn-xs btn-default" type="submit" value="Edit" />-->
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+        {% endif %}
+
+        {% if entry.train_accuracy != None %}
+        <p class="list-group-item-text">Train accuracy: {{ entry.train_accuracy }}</p>
+        {% endif %}
+        {% if entry.test_accuracy != None %}
+        <p class="list-group-item-text">Test accuracy: {{ entry.test_accuracy }}</p>
+        {% endif %}
+        {% if entry.r2_train_score != None %}
+        <p class="list-group-item-text">R<sup>2</sup> Train Score: {{ entry.r2_train_score }}</p>
+        {% endif %}
+        {% if entry.r2_test_score != None %}
+        <p class="list-group-item-text">R<sup>2</sup> Test Score: {{ entry.r2_test_score }}</p>
+        {% endif %}
+        <p class="list-group-item-text">Time: {{ entry.time }} seconds</p>
+        {% if user.is_superuser == True %}
+
+                <p class='list-group-item-text'><small>posted by {{ entry.owner.username }}</small></p>
+
+        {% endif %}
+        </a>
+
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no entries in the database.</p>
+{% endif %}
+</p>
+<p>
+
+</div>
+
+{% endblock %}

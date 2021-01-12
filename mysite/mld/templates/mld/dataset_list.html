@@ -1,0 +1,51 @@
+{% extends "mld_menu.html" %}
+{% block content %}
+<h1 class="text-center">Datasets</h1>
+
+<div class="container">
+
+    <form action="{% url 'mld:dataset_create' %}">
+        <input class ="form-control form-horizontal btn btn-primary" type="submit" value="Add Dataset">
+    </form>
+
+{% if dataset_list %}
+<ul class="list-group">
+  {% for dataset in dataset_list %}
+
+        <a href="{% url 'mld:dataset_detail'  dataset.id %}" class="list-group-item"><h4 class="list-group-item-heading">{{ dataset.title }}</h4>
+        {% if dataset.owner == user %}
+            <span class="pull-right">
+                <form action="{% url 'mld:dataset_delete' dataset.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </span>
+            <span class="pull-right">
+                <form action="{% url 'mld:dataset_update' dataset.id %}">
+                    <button type="submit" class="btn btn-link">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </form>
+            </span>
+            {% endif %}
+        <p class="list-group-item-text">ML type: {{ dataset.ml_type }}</p>
+        {% if user.is_superuser == True %}
+
+
+                <p class='list-group-item-text'><small>posted by {{ dataset.owner.username }}</small></p>
+
+
+        {% endif %}
+
+        </a>
+  {% endfor %}
+</ul>
+{% else %}
+  <p>There are no datasets in the database.</p>
+{% endif %}
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "mld_menu.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+
+
+
+<span style="float: right;">
+{% if entry.owner == user %}
+<a href="{% url 'mld:mld_update' entry.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'mld:mld_delete' entry.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+<h1 class="text-center">Entry details</h1>
+
+<ul class="list-group">
+    <li class="list-group-item"><strong>ML type:</strong> {{ entry.ml_type }}</li>
+    <li class="list-group-item"><strong>Dataset:</strong> {{ entry.dataset }}</li>
+    <li class="list-group-item"><strong>Algorithm:</strong> {{ entry.algorithm }}</li>
+    {% if entry.algorithm.parameter_1_name.title != 'None' %}
+    <li class="list-group-item"><strong>Parameter 1 </strong> -- {{entry.algorithm.parameter_1_name.title}}: {{ entry.parameter_1_value }}</li>
+    {% endif %}
+    {% if entry.algorithm.parameter_2_name.title != 'None' %}
+    <li class="list-group-item"><strong>Parameter 2 </strong> -- {{entry.algorithm.parameter_2_name.title}}: {{ entry.parameter_2_value }}</li>
+    {% endif %}
+    {% if entry.algorithm.parameter_3_name.title != 'None' %}
+    <li class="list-group-item"><strong>Parameter 3 </strong> -- {{entry.algorithm.parameter_3_name.title}}: {{ entry.parameter_3_value }}</li>
+    {% endif %}
+    {% if entry.train_accuracy != None %}
+    <li class="list-group-item"><strong>Train accuracy:</strong> {{ entry.train_accuracy }}</li>
+    {% endif %}
+    {% if entry.train_accuracy != None %}
+    <li class="list-group-item"><strong>Test accuracy:</strong> {{ entry.test_accuracy }}</li>
+    {% endif %}
+    {% if entry.r2_train_score != None %}
+    <li class="list-group-item"><strong>R<sup>2</sup> Train score:</strong> {{ entry.r2_train_score }}</li>
+    {% endif %}
+    {% if entry.rmse_train != None %}
+    <li class="list-group-item"><strong>Root Mean Squared Error Train score:</strong> {{ entry.rmse_train }}</li>
+    {% endif %}
+    {% if entry.r2_test_score != None %}
+    <li class="list-group-item"><strong>R<sup>2</sup> Test score:</strong> {{ entry.r2_test_score }}</li>
+    {% endif %}
+    {% if entry.rmse_test != None %}
+    <li class="list-group-item"><strong>Root Mean Squared Error Test score:</strong> {{ entry.rmse_test  }}</li>
+    {% endif %}
+    <li class="list-group-item"><strong>Time:</strong> {{ entry.time }} seconds</li>
+</ul>
+
+{% if entry.algorithm.ml_type.title == 'Binary Classification' %}
+    <table class="table table-bordered" style="width:200px;">
+        <caption><strong>Confusion Matrix:</strong></caption>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col" class='active'>pred. -</th>
+            <th scope="col" class='active'>pred. +</th>
+        </tr>
+        <tr>
+            <th scope="row" class='active'>- class</th>
+            <td><strong>TN:</strong> {{ entry.TN }}</td>
+            <td><strong>FP:</strong> {{ entry.FP }}</td>
+        </tr>
+        <tr>
+            <th scope="row" class='active'>+ class</th>
+            <td><strong>FN:</strong> {{ entry.FN }}</td>
+            <td><strong>TP:</strong> {{ entry.TP }}</td>
+        </tr>
+    </table>
+<ul class="list-group">
+    {% if entry.precision != None %}
+    <li class="list-group-item"><strong>Precision score</strong> (Positive Predictive Value -- TP / TP + FP): {{ entry.precision }}</li>
+    {% endif %}
+    {% if entry.recall != None %}
+    <li class="list-group-item"><strong>Recall score</strong> (True Positive Rate -- TP / TP + FN ): {{ entry.recall }}</li>
+    {% endif %}
+    {% if entry.f1 != None %}
+    <li class="list-group-item"><strong>F1 score</strong> (harmonic mean of precision & recall): {{ entry.f1}}</li>
+    {% endif %}
+    {% if entry.roc_auc != None %}
+    <li class="list-group-item"><strong>ROC Area Under Curve score:</strong> {{ entry.roc_auc}}</li>
+    {% endif %}
+    {% if entry.avg_precision != None %}
+    <li class="list-group-item"><strong>Average Precision score (area under Precision-Recall curve):</strong> {{ entry.avg_precision}}</li>
+    {% endif %}
+</ul>
+
+
+<!--{{ fpr }}-->
+
+<!--{{ tpr }}-->
+
+<img style="width:90%;" src="{% url 'mld:roc_graph_picture' entry.id %}">
+
+<img style="width:90%;" src="{% url 'mld:precision_recall_graph_picture' entry.id %}">
+
+
+{% else %}
+
+
+    {% if entry.target_data != None %}
+        <h3 class="text-center">{{entry.dataset}} Target Values Histogram/KDE:</h3>
+        <img class="center-block" style="width:90%;" src="{% url 'mld:dist_plot_picture' entry.id %}">
+    {% endif %}
+    <p></p>
+    <h3 class="text-center">{{entry.dataset}} Heat Map:</h3>
+    <img class="center-block" style="width:90%;" src="{% url 'mld:heat_map_picture' entry.id %}">
+
+{% endif %}
+<p></p>
+<a href="{% url 'mld:all' %}">All entries</a>
+
+</div>
+{% endblock %}

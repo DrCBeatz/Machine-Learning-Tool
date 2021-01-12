@@ -1,0 +1,22 @@
+{% extends "mld_menu.html" %}
+{% block content %}
+<h1 class="text-center">Algorithms</h1>
+
+<p class="text-center"><em>(click for description)</em></p>
+
+<div class="container">
+    {% if algorithm_list %}
+        <ul class="list-group">
+          {% for algorithm in algorithm_list %}
+                <a href="{% url 'mld:algorithm_detail'  algorithm.id %}" class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ algorithm.title }}</h4></a>
+          {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no algorithms in the database.</p>
+    {% endif %}
+
+    <p>
+
+</div>
+{% endblock %}

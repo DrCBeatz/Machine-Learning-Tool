@@ -1,0 +1,45 @@
+{% extends "mld_menu.html" %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="container">
+<!--    <span style="float: right;">-->
+<!--{% if graph.owner == user %}-->
+<!--<a href="{% url 'mld:graph_update' graph.id %}"><i class="fa fa-pencil"></i></a>-->
+<!--<a href="{% url 'mld:graph_delete' graph.id %}"><i class="fa fa-trash"></i></a>-->
+<!--{% endif %}-->
+<!--</span>-->
+
+<h2 class="text-center">{{ graph.dataset }} - {{ graph.algorithm }} {% if graph.ml_type.id == 1 %}Train-Test Accuracy{% else %}R<sub>2</sub> Score{% endif %}:</h2>
+
+<img style="width:90%;" src="{% url 'mld:graph_picture' graph.id %}">
+
+<ul class="list-group">
+<li class="list-group-item"><strong>ML type:</strong> {{ graph.ml_type }}</li>
+<li class="list-group-item"><strong>Dataset:</strong> {{ graph.dataset }}</li>
+<li class="list-group-item">
+<strong>Algorithm:</strong> {{ graph.algorithm }}
+</li>
+{% if graph.parameter_to_plot == 1 %}
+<li class="list-group-item">
+<strong>Parameter 1:</strong>{{ graph.algorithm.parameter_1_name }}
+</li>
+{% endif %}
+{% if graph.parameter_to_plot == 2 %}
+<li class="list-group-item">
+<strong>Parameter 2:</strong> {{ graph.algorithm.parameter_name }}
+</li>
+{% endif %}
+{% if graph.parameter_to_plot == 3 %}
+<li class="list-group-item">
+<strong>Parameter 3:</strong> {{ graph.algorithm.parameter_3_name }}
+</li>
+{% endif %}
+
+<p>
+<a href="{% url 'mld:all_graphs' %}">All graphs</a>
+</p>
+</div>
+{% endblock %}

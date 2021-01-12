@@ -1,0 +1,215 @@
+{% extends "mld_menu.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'mld:all' %}';return false;">
+  </form>
+</p>
+<script>
+
+    var algorithms = [];
+    var datasets = [];
+    var binary_classification_datasets = [];
+    var regression_datasets = [];
+    var binary_classification_algorithms = []; //
+    var regression_algorithms = []; //
+    var number_of_parameters = []; //
+    var parameter_1_names_keys = []; //
+    var parameter_2_names_keys = []; //
+    var parameter_3_names_keys = [];
+    var parameter_names = [];
+
+    var dataset_select_text = [];
+    var dataset_select_value = [];
+    var algorithm_select_text = [];
+    var algorithm_select_value = [];
+
+    var request1 = new XMLHttpRequest();
+    var request2 = new XMLHttpRequest();
+    var request3 = new XMLHttpRequest();
+
+    request1.open('GET', '{% url 'mld:return_algorithm_models' %}', true);
+    request2.open('GET', '{% url 'mld:return_dataset_models' %}', true);
+    request3.open('GET', '{% url 'mld:return_parameter_name_models' %}', true);
+
+    request1.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            var json_length = json.length;
+
+            for (i = 0; i < json_length; i++)
+            {
+              algorithms.push(json[i].fields.title);
+              parameter_names.push(json[i].fields.parameter_names);
+              parameter_1_names_keys.push(json[i].fields.parameter_1_name);
+              parameter_2_names_keys.push(json[i].fields.parameter_2_name);
+              parameter_3_names_keys.push(json[i].fields.parameter_3_name);
+
+              if (json[i].fields.ml_type == 1)
+              {
+                  binary_classification_algorithms.push(json[i].fields.pk);
+              }
+              else if (json[i].fields.ml_type == 2)
+              {
+                  regression_algorithms.push(json[i].fields.pk);
+              }
+          }
+
+            console.log(binary_classification_algorithms.length);
+            console.log(regression_algorithms.length);
+            console.log(parameter_names.length);
+            console.log(parameter_1_names_keys.length);
+            console.log(parameter_2_names_keys.length);
+            console.log(parameter_3_names_keys.length);
+        console.log('loaded algorithm models')
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request1.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+    request2.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            var json_length = json.length;
+
+            for (i = 0; i < json_length; i++)
+            {
+              algorithms.push(json[i].fields.title);
+              parameter_names.push(json[i].fields.parameter_names);
+              parameter_1_names_keys.push(json[i].fields.parameter_1_name);
+              parameter_2_names_keys.push(json[i].fields.parameter_2_name);
+              parameter_3_names_keys.push(json[i].fields.parameter_3_name);
+
+              if (json[i].fields.ml_type == 1)
+              {
+                  binary_classification_algorithms.push(json[i].fields.pk);
+              }
+              else if (json[i].fields.ml_type == 2)
+              {
+                  regression_algorithms.push(json[i].fields.pk);
+              }
+          }
+
+        //     console.log(binary_classification_algorithms.length);
+        //     console.log(regression_algorithms.length);
+        //     console.log(parameter_names.length);
+        //     console.log(parameter_1_names_keys.length);
+        //     console.log(parameter_2_names_keys.length);
+        //     console.log(parameter_3_names_keys.length);
+
+        console.log('loaded dataset models');
+
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request2.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+        request3.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            json_length = json.length;
+
+        //     for (i = 0; i < json_length; i++)
+        //     {
+        //       algorithms.push(json[i].fields.title);
+        //       parameter_names.push(json[i].fields.parameter_names);
+        //       parameter_1_names_keys.push(json[i].fields.parameter_1_name);
+        //       parameter_2_names_keys.push(json[i].fields.parameter_2_name);
+        //       parameter_3_names_keys.push(json[i].fields.parameter_3_name);
+
+        //       if (json[i].fields.ml_type == 1)
+        //       {
+        //           binary_classification_algorithms.push(json[i].fields.pk);
+        //       }
+        //       else if (json[i].fields.ml_type == 2)
+        //       {
+        //           regression_algorithms.push(json[i].fields.pk);
+        //       }
+        //   }
+
+        //     console.log(binary_classification_algorithms.length);
+        //     console.log(regression_algorithms.length);
+        //     console.log(parameter_names.length);
+        //     console.log(parameter_1_names_keys.length);
+        //     console.log(parameter_2_names_keys.length);
+        //     console.log(parameter_3_names_keys.length);
+
+        console.log('loaded parameter name models');
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request3.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+
+    function AddAttributes(){
+        document.getElementById('id_ml_type').setAttribute('onchange', 'myFunction();');
+
+        document.getElementById('id_algorithm').setAttribute('onchange', 'checkNumberOfParameters();');
+
+    };
+
+    function myFunction() {
+        console.log('oh hai!');
+    };
+
+    function checkNumberOfParameters() {
+        console.log('henlo fren!');
+    };
+
+    window.onload = AddAttributes;
+
+
+    request1.send();
+    request2.send();
+    request3.send();
+
+
+</script>
+
+{% endblock %}

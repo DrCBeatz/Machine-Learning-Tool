@@ -1,0 +1,375 @@
+{% extends "mld_menu.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'mld:all' %}';return false;">
+  </form>
+</p>
+
+{% endblock %}
+
+{% block footer %}
+
+<script>
+
+    var algorithms = [];
+    var algorithms_dict = {};
+    var datasets = [];
+    var datasets_dict = {};
+    var binary_classification_datasets = [];
+    var regression_datasets = [];
+    var binary_classification_algorithms = []; //
+    var regression_algorithms = []; //
+    var number_of_parameters = []; //
+    var parameter_1_names_keys = []; //
+    var parameter_2_names_keys = []; //
+    var parameter_3_names_keys = [];
+    var parameter_names = [];
+
+
+    var dataset_select_text = [];
+    var dataset_select_value = [];
+    var algorithm_select_text = [];
+    var algorithm_select_value = [];
+
+    var request1 = new XMLHttpRequest();
+    var request2 = new XMLHttpRequest();
+    var request3 = new XMLHttpRequest();
+
+    request1.open('GET', '{% url 'mld:return_algorithm_models' %}', true);
+    request2.open('GET', '{% url 'mld:return_dataset_models' %}', true);
+    request3.open('GET', '{% url 'mld:return_parameter_name_models' %}', true);
+
+    request1.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            var json_length = json.length;
+
+            for (i = 0; i < json_length; i++)
+            {
+              algorithms.push(json[i].fields.title);
+              algorithms_dict[json[i].pk] = json[i].fields.title;
+              console.log(algorithms_dict[json[i].pk], json[i].pk)
+            //   console.log(json[i].fields.title);
+              number_of_parameters.push(json[i].fields.number_of_parameters);
+              parameter_1_names_keys.push(json[i].fields.parameter_1_name);
+              parameter_2_names_keys.push(json[i].fields.parameter_2_name);
+              parameter_3_names_keys.push(json[i].fields.parameter_3_name);
+
+              if (json[i].fields.ml_type == 1)
+              {
+                  binary_classification_algorithms.push(json[i].fields.pk);
+              }
+              else if (json[i].fields.ml_type == 2)
+              {
+                  regression_algorithms.push(json[i].fields.pk);
+              }
+          }
+            console.log('algorithms length');
+            console.log(binary_classification_algorithms.length);
+            console.log(regression_algorithms.length);
+            // console.log(parameter_names.length);
+            console.log(parameter_1_names_keys.length);
+            console.log(parameter_2_names_keys.length);
+            console.log(parameter_3_names_keys.length);
+        console.log('loaded algorithm models')
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request1.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+    request2.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            var json_length = json.length;
+
+            for (i = 0; i < json_length; i++)
+            {
+              datasets.push(json[i].fields.title);
+              datasets_dict[json[i].pk] = json[i].fields.title;
+            //   console.log(json[i].fields.title);
+              console.log(datasets_dict[json[i].pk], json[i].pk)
+              if (json[i].fields.ml_type == 1)
+              {
+                  binary_classification_datasets.push(json[i].fields.pk);
+              }
+              else if (json[i].fields.ml_type == 2)
+              {
+                  regression_datasets.push(json[i].fields.pk);
+              }
+          }
+            console.log('datasets length');
+            console.log(binary_classification_datasets.length);
+            console.log(regression_datasets.length);
+
+        console.log('loaded dataset models');
+
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request2.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+        request3.onload = function()
+    {
+        if (this.status >= 200 && this.status < 400)
+        {
+        // Success!
+            var data = JSON.parse(this.response);
+
+            var json = JSON.parse(data);
+            var json_length = json.length;
+
+
+            for (i = 0; i < json_length; i++)
+            {
+              parameter_names.push(json[i].fields.title);
+              console.log(json[i].fields.title);
+          }
+
+        console.log('loaded parameter name models');
+
+      }
+      else
+      {
+        // We reached our target server, but it returned an error
+        console.log('unknown error');
+      }
+    };
+
+    request3.onerror = function() {
+      // There was a connection error of some sort
+      console.log('connection error');
+    };
+
+
+    function AddAttributes(){
+        document.getElementById('id_ml_type').setAttribute('onchange', 'myFunction();');
+
+        document.getElementById('id_algorithm').setAttribute('onchange', 'checkNumberOfParameters();');
+        console.log('added attributes');
+
+    };
+
+    function myFunction() {
+        select_elements = getSelectedItems();
+
+        x = document.getElementById('id_dataset');
+
+        y = document.getElementById('id_algorithm');
+
+        if (select_elements[0][0].text == '---------')
+        {
+            select_elements[0][0].remove();
+        }
+
+        // if (dataset_select_text.length == 0)
+        // {
+        //     for (var i = 0; i < select_elements[1].length; i++)
+        //     {
+        //         dataset_select_text[i] = select_elements[1][i].text;
+        //         dataset_select_value[i] = select_elements[1][i].value;
+        //     }
+
+        //     for (var i = 0; i < select_elements[2].length; i++)
+        //     {
+        //         algorithm_select_text[i] = select_elements[2][i].text;
+        //         algorithm_select_value[i] = select_elements[2][i].value;
+        //     }
+
+        // }
+
+        $("#id_dataset").empty();
+        $("#id_algorithm").empty();
+
+        var opt = document.createElement('option');
+        opt.value = 1;
+        binary_classification_datasets[1]
+        opt.text = 'oh hai!'
+        x.appendChild(opt);
+
+        var e = document.getElementById("id_ml_type");
+        var ml_type_value = e.value;
+
+
+        if (ml_type_value == 1)
+        {
+
+            // for (var i = 0; i < dataset_select_text.length; i++)
+            for (var i = 0; i < datasets_dict.length; i++)
+            {
+                console.log('count:', i);
+                for (var j = 0;j  < binary_classification_datasets.length; j++)
+                {
+                    // if (dataset_select_value[i] == binary_classification_datasets[j] )
+                    // {
+
+                        var opt = document.createElement('option');
+                        // opt.value = dataset_select_value[i];
+                        // opt.text = dataset_select_text[i];
+                        opt.value = binary_classification_datasets[i];
+                        opt.text = datasets_dict[binary_classification_datasets[i]];
+                        x.appendChild(opt);
+
+                    // }
+                }
+            }
+
+            // for (var i = 0; i < algorithm_select_text.length; i++)
+            for (var i = 0; i < algorithms_dict.length; i++)
+            {
+                for (var j = 0;j  < binary_classification_algorithms.length; j++)
+                {
+                    // if (algorithm_select_value[i] == binary_classification_algorithms[j] )
+                    // {
+
+                        var opt = document.createElement('option');
+                        // opt.value = algorithm_select_value[i];
+                        // opt.text = algorithm_select_text[i];
+                        opt.value = binary_classification_algorithms[i];
+                        opt.text = algorithms_dict[binary_classification_algorithms[i]];
+                        y.appendChild(opt);
+                    // }
+                }
+            }
+        }
+        else if (ml_type_value == 2)
+
+        {
+            // for (var i = 0; i < dataset_select_text.length; i++)
+            for (var i = 0; i < datasets_dict.length; i++)
+            {
+                for (var j = 0;j  < regression_datasets.length; j++)
+                {
+                    // if (dataset_select_value[i] == regression_datasets[j] )
+                    // {
+                        var opt = document.createElement('option');
+                        // opt.value = dataset_select_value[i];
+                        // opt.text = dataset_select_text[i];
+                        opt.value = regression_datasets[i];
+                        opt.text = datasets_dict[regression_datasets[i]];
+                        x.appendChild(opt);
+                    // }
+                }
+            }
+            // for (var i = 0; i < algorithm_select_text.length; i++)
+            for (var i = 0; i < algorithms_dict.length; i++)
+            {
+                for (var j = 0;j  < regression_algorithms.length; j++)
+                {
+                    // if (algorithm_select_value[i] == regression_algorithms[j] )
+                    // {
+                        var opt = document.createElement('option');
+                        // opt.value = algorithm_select_value[i];
+                        // opt.text = algorithm_select_text[i];
+                        opt.value = regression_algorithms[i];
+                        opt.text = algorithms_dict[regression_algorithms[i]];
+
+                        y.appendChild(opt);
+                    // }
+                }
+            }
+        }
+
+        checkNumberOfParameters();
+    };
+
+    function checkNumberOfParameters() {
+
+
+        var selected_algorithm_value = document.getElementById("id_algorithm").value;
+        console.log('called checkNumberOfParameters: value', selected_algorithm_value );
+        var selected_parameter_number =  number_of_parameters[selected_algorithm_value - 1];
+        console.log(number_of_parameters[0]);
+
+        var p1v_select = document.getElementById("div_id_parameter_1_value");
+        var p2v_select = document.getElementById("div_id_parameter_2_value");
+        var p3v_select = document.getElementById("div_id_parameter_3_value");
+
+        if (selected_parameter_number == 0)
+        {
+                    p1v_select.style.display = "none";
+                    p2v_select.style.display = "none";
+                    p3v_select.style.display = "none";
+        }
+        else if (selected_parameter_number == 1)
+        {
+                document.querySelector("label[for='id_parameter_1_value']").innerHTML = parameter_names[parameter_1_names_keys[selected_algorithm_value - 1] - 1] + " *";
+
+                p1v_select.style.display = "block";
+                p2v_select.style.display = "none";
+                p3v_select.style.display = "none";
+        }
+        else if (selected_parameter_number == 2)
+        {
+                document.querySelector("label[for='id_parameter_1_value']").innerHTML = parameter_names[parameter_1_names_keys[selected_algorithm_value - 1] - 1] + " *";
+                document.querySelector("label[for='id_parameter_2_value']").innerHTML = parameter_names[parameter_2_names_keys[selected_algorithm_value - 1] - 1] + " *";
+
+                p1v_select.style.display = "block";
+                p2v_select.style.display = "block";
+                p3v_select.style.display = "none";
+        }
+        else if (selected_parameter_number == 3)
+        {
+                document.querySelector("label[for='id_parameter_1_value']").innerHTML = parameter_names[parameter_1_names_keys[selected_algorithm_value - 1] - 1] + " *";
+                document.querySelector("label[for='id_parameter_2_value']").innerHTML = parameter_names[parameter_2_names_keys[selected_algorithm_value - 1] - 1] + " *";
+                document.querySelector("label[for='id_parameter_3_value']").innerHTML = parameter_names[parameter_3_names_keys[selected_algorithm_value - 1] - 1] + " *";
+
+                p1v_select.style.display = "block";
+                p2v_select.style.display = "block";
+                p3v_select.style.display = "block";
+        }
+
+
+    };
+
+        function getSelectedItems()
+        {
+            var elements = document.getElementsByTagName("select");
+            console.log(elements);
+            return elements;
+
+        };
+
+    window.onload = AddAttributes;
+
+
+    request1.send();
+    request2.send();
+    request3.send();
+
+
+</script>
+
+{% endblock %}

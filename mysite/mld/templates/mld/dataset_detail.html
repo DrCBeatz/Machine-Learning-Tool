@@ -1,0 +1,52 @@
+{% extends "mld_menu.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+
+<span style="float: right;">
+{% if dataset.owner == user %}
+<a href="{% url 'mld:dataset_update' dataset.id %}"><i class="fa fa-pencil"></i></a>
+<a href="{% url 'mld:dataset_delete' dataset.id %}"><i class="fa fa-trash"></i></a>
+{% endif %}
+</span>
+
+<h1 class="text-center">{{ dataset.title }}</h1>
+
+<ul class="list-group">
+<li class="list-group-item"><strong>Dataset description:</strong> {{ dataset.description }}</li>
+
+<li class="list-group-item"><strong>ML type:</strong> {{ dataset.ml_type }}</li>
+
+<li class="list-group-item"><strong>File type:</strong> {{ dataset.file_type }}</li>
+
+<li class="list-group-item"><strong># of features:</strong> {{ dataset.dimensionality }} </li>
+<li class="list-group-item"><strong># of samples:</strong> {{ dataset.samples }} </li>
+{% if dataset.ml_type.id == 1 %}
+<li class="list-group-item"><strong># of classes:</strong> {{ dataset.number_of_classes }} </li>
+<li class="list-group-item"><strong>Class 1 count :</strong> {{ dataset.class_1_count }} ({{ dataset.class_1_label }})</li>
+<li class="list-group-item"><strong>Class 2 count :</strong> {{ dataset.class_2_count }} ({{ dataset.class_2_label }})</li>
+{% elif dataset.ml_type.id == 2 %}
+<li class="list-group-item"><strong>Target Mean:</strong> {{ dataset.target_mean }} </li>
+<li class="list-group-item"><strong>Target Standard Deviation :</strong> {{ dataset.target_std }} </li>
+<li class="list-group-item"><strong>Target Min value :</strong> {{ dataset.target_min }}</li>
+<li class="list-group-item"><strong>Target Max value :</strong> {{ dataset.target_max }}</li>
+{% endif %}
+
+<li class="list-group-item"><strong>Has header:</strong> {{dataset.has_header}}</li>
+<li class="list-group-item"><strong>Public:</strong> {{dataset.public}}</li>
+</ul>
+<a href="{% url 'mld:all_datasets' %}">All datasets</a>
+</p>
+
+<h4>Browse {{ dataset.title }}:</h4>
+
+<div class="table-responsive">
+    {{ target_data }}
+    {{ html_data|safe }}
+
+</div>
+
+</div>
+{% endblock %}
