@@ -10,6 +10,7 @@ urlpatterns = [
 
 
     # path('images', views.ImageListView.as_view(), name='all'),
+
     path('', views.ImageListView.as_view(), name='all'),
     path('images/<int:pk>', views.ImageDetailView.as_view(), name='image_detail'),
     path('images/create', views.ImageCreateView.as_view(success_url=reverse_lazy('dl:all')), name='image_create'),

@@ -170,7 +170,9 @@ class ImageUpdateView(LoginRequiredMixin, View):
             ctx = {'form': form}
             return render(request, self.template_name, ctx)
 
+        image.thumbnail.generate()
         image = form.save(commit=False)
+
         image.save()
 
         return redirect(self.success_url)

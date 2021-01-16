@@ -143,6 +143,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 # for production url could be: /home/mysite/media/
 
+# TEMPLATE_CONTEXT_PROCESSORS
 
 # Add the settings below
 
